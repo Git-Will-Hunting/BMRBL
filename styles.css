@@ -1,0 +1,72 @@
+html {
+    background-color: #90ABB6;
+}
+
+.table-container {
+    width: 90vw; /* Adjust the width as needed */
+    height: 60vh; /* Adjust the height as needed */  
+    margin: 12px;
+    border: 2px solid #37393A;
+    overflow: auto; /* Add a scroll bar when content overflows */
+}
+
+table {
+  width: 100%; /* Make the table fill the container */
+  border-collapse: collapse; /* Optional: Collapse table borders */
+}
+
+th, td {
+  border: 1px solid #1F88C1; /* Optional: Table border */
+  padding: 8px; /* Optional: Table cell padding */
+  text-align: left; /* Optional: Text alignment */
+}
+
+th {
+  background-color: #1F88C1; /* Optional: Header background color */
+  border: 1px solid #8EA7CC; 
+}
+
+td {
+  background-color: #8EA7CC; /* Optional: Header background color */
+}
+
+/* Change the color of the scrollbar track */
+::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+  background-color: #ABBDD9; /* Background color of the scrollbar track */
+}
+
+/* Change the appearance of the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #1F88C1; /* Color of the scrollbar thumb */
+  border-radius: 5px; /* Border radius of the scrollbar thumb */
+}
+
+/* Optionally, you can also style other parts of the scrollbar, like the scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: #ABBDD9; /* Background color of the scrollbar corner */
+}
+
+/* Optionally, you can style the scrollbar track when the scrollbar is in a hover state */
+::-webkit-scrollbar:hover {
+  background-color: #ABBDD9; /* Background color of the scrollbar track on hover */
+}
+
+/* Optionally, you can style the scrollbar thumb when the scrollbar is in a hover state */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #37393A; /* Color of the scrollbar thumb on hover */
+}
+
+#resultsContainer {
+  padding: 1vw;
+  background-color: #f5f5f5;
+  margin: 12px;
+  border: 2px solid #37393A;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: auto; /* Add a scrollbar if the JSON output is too long */
+  height: 10vh; /* Limit the height of the JSON output box */
+  width: 88vw;
+}
