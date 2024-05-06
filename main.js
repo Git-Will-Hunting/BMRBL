@@ -1,66 +1,39 @@
-async function handleSignInCallback(response) {
-  // Check if the user signed in successfully
-  if (response && response.credential) {
-      // Access token received from Google One Tap
-      const accessToken = response.credential;
-      
-      // Now, you can proceed with loading the gapi client and accessing Google APIs
-      await loadGapiClientAndAccessApis(accessToken);
-  } else {
-      // Handle sign-in failure or cancellation
-      console.log('Sign-in was canceled or failed.');
-  }
+// Callback function for Google One Tap sign-in
+function handleOneTapSignIn(response) {
+  // Handle the sign-in response here
+  const credential = response.credential;
+  console.log('One Tap credential:', credential);
+  
+  // Load the Google API Client Library for JavaScript (gapi)
+  loadGapiClient();
 }
 
+// Load the Google API Client Library for JavaScript (gapi)
+function loadGapiClient() {
+  gapi.load('client', {
+      // Specify the callback function to be called when gapi client is loaded
+      callback: initGapiClient
+  });
+}
 
-const gapiLoadPromise = new Promise((resolve, reject) => {
-  gapiLoadOkay = resolve;
-  gapiLoadFail = reject;
-});
-const gisLoadPromise = new Promise((resolve, reject) => {
-  gisLoadOkay = resolve;
-  gisLoadFail = reject;
-});
-
+// Initialize the gapi client
+function initGapiClient() {
+  try{
+  gapi.client.load('calendar', 'v3', function() {
+    console.log('Calendar API loaded.');
+  })}
+  catch(err){
+    console.error('Error loading calendar API: ' + err)
+  };
+  try {
+  gapi.client.load('sheets', 'v4', function() {
+    console.log('Sheets API loaded.');
+  })}
+  catch(err){
+    console.error('Error loading sheets API: ' + err)
+  };
+}
 var tokenClient;
-
-(async () => {
-  document.getElementById("showEventsBtn").style.visibility="hidden";
-  document.getElementById("revokeBtn").style.visibility="hidden";
-
-  // First, load and initialize the gapi.client
-  await gapiLoadPromise;
-  await new Promise((resolve, reject) => {
-    // NOTE: the 'auth2' module is no longer loaded.
-    gapi.load('client', {callback: resolve, onerror: reject});
-  });
-  await gapi.client.init({
-    // NOTE: OAuth2 'scope' and 'client_id' parameters have moved to initTokenClient().
-  })
-  .then(function() {  // Load the Calendar API discovery document.
-    gapi.client.load('https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest');
-    gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4');
-  });
-
-  // Now load the GIS client
-  await gisLoadPromise;
-  await new Promise((resolve, reject) => {
-    try {
-      tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
-          scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file',
-          prompt: 'consent',
-          callback: '',  // defined at request time in await/promise scope.
-      });
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
-
-  document.getElementById("showEventsBtn").style.visibility="visible";
-  document.getElementById("revokeBtn").style.visibility="visible";
-})();
 
 async function getToken(err) {
 
@@ -76,7 +49,6 @@ async function getToken(err) {
             reject(resp);
           }
           // GIS has automatically updated gapi.client with the newly issued access token.
-          console.debug('gapi.client access token: ' + JSON.stringify(gapi.client.getToken()));
           resolve(resp);
         };
         tokenClient.requestAccessToken();
@@ -89,6 +61,17 @@ async function getToken(err) {
     throw new Error(err);
   }
 }
+
+// Initialize Google One Tap
+window.onload = function() {
+  google.accounts.id.initialize({
+      // Client ID obtained from Google Cloud Console
+      client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
+      'callback': handleOneTapSignIn,
+      'scope': 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file'
+  });
+};
+
 
 let myCalendars = [];
 var umpireCalendarId;

@@ -13,15 +13,13 @@
     <div id="g_id_onload"
      data-client_id="753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com"
      data-context="signin"
-     data-callback="handleSignInCallback"
+     data-callback="handleOneTapSignIn"
      data-itp_support="true">
     </div>
-    <button id="showEventsBtn" onclick="fetchData();">Sign in using Google</button><br><br>
-    <button id="revokeBtn" onclick="revokeToken();">Sign out of the app</button>
   </div>
   
-  <script async src="https://apis.google.com/js/api.js" onload="gapiLoadOkay()" onerror="gapiLoadFail(event)"></script>
-  <script async src="https://accounts.google.com/gsi/client" onload="gisLoadOkay()" onerror="gisLoadFail(event)"></script>
+  <script async defer src="https://apis.google.com/js/api.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <div>
     <div id="data-tools">
