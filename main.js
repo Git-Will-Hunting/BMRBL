@@ -1,18 +1,3 @@
-async function handleSignInCallback(response) {
-  // Check if the user signed in successfully
-  if (response && response.credential) {
-      // Access token received from Google One Tap
-      const accessToken = response.credential;
-      
-      // Now, you can proceed with loading the gapi client and accessing Google APIs
-      await loadGapiClientAndAccessApis(accessToken);
-  } else {
-      // Handle sign-in failure or cancellation
-      console.log('Sign-in was canceled or failed.');
-  }
-}
-
-
 const gapiLoadPromise = new Promise((resolve, reject) => {
   gapiLoadOkay = resolve;
   gapiLoadFail = reject;
