@@ -16,6 +16,8 @@
      data-callback="handleOneTapSignIn"
      data-itp_support="true">
     </div>
+    <button id="showEventsBtn" onclick="getToken();">Sign in using Google</button><br><br>
+    <button id="revokeBtn" onclick="revokeToken();">Sign out of the app</button>
   </div>
   
   <script async defer src="https://apis.google.com/js/api.js"></script>

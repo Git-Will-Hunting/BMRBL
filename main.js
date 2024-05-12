@@ -33,13 +33,38 @@ function initGapiClient() {
     console.error('Error loading sheets API: ' + err)
   };
 }
+const gapiLoadPromise = new Promise((resolve, reject) => {
+  gapiLoadOkay = resolve;
+  gapiLoadFail = reject;
+});
+const gisLoadPromise = new Promise((resolve, reject) => {
+  gisLoadOkay = resolve;
+  gisLoadFail = reject;
+});
+
 var tokenClient;
 
 async function getToken(err) {
-
-  if (err.result.error.code == 401 || (err.result.error.code == 403) &&
-      (err.result.error.status == "PERMISSION_DENIED")) {
-
+  if (!err) {
+    await new Promise((resolve, reject) => {
+      try {
+        // Settle this promise in the response callback for requestAccessToken()
+        tokenClient.callback = (resp) => {
+          if (resp.error !== undefined) {
+            reject(resp);
+          }
+          // GIS has automatically updated gapi.client with the newly issued access token.
+          console.debug('gapi.client access token: ' + JSON.stringify(gapi.client.getToken()));
+          resolve(resp);
+        };
+        tokenClient.requestAccessToken();
+      } catch (err) {
+        console.error(err)
+      }
+    });
+    
+  } else if (err.result.error.code == 401 || (err.result.error.code == 403) &&
+  (err.result.error.status == "PERMISSION_DENIED")) {
     // The access token is missing, invalid, or expired, prompt for user consent to obtain one.
     await new Promise((resolve, reject) => {
       try {
