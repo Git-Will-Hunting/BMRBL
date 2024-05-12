@@ -20,8 +20,8 @@
     <button id="revokeBtn" onclick="revokeToken();">Sign out of the app</button>
   </div>
   
-  <script async defer src="https://apis.google.com/js/api.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script async src="https://apis.google.com/js/api.js" onload="gapiLoadOkay()" onerror="gapiLoadFail(event)"></script>
+  <script async src="https://accounts.google.com/gsi/client" onload="gisLoadOkay()" onerror="gisLoadFail(event)"></script>
 
   <div>
     <div id="data-tools">
