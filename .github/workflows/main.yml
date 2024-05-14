@@ -21,14 +21,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Inject environment variable into JavaScript code
-        run: node env.js
+      - name: Inject API key
+        run: echo "export const GAPI_KEY='${{ secrets.GAPIKEY }}';" > src/config.js
 
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          name: build
+          path: dist
