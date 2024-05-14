@@ -1,3 +1,4 @@
+import GAPI_KEY from './config.js'
 const gapiLoadPromise = new Promise((resolve, reject) => {
   gapiLoadOkay = resolve;
   gapiLoadFail = reject;
@@ -158,7 +159,8 @@ async function fetchData() {
     'ranges': [
       'BMRBL SEASON SCHEDULE!A1:H400',
       'CONTACT LIST!A1:F82'
-    ]
+    ],
+    'apiKey': GAPI_KEY
   })
   .then(response => {
     gameList = response.result.sheets[0].data[0].rowData;
