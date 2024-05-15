@@ -1,69 +1,35 @@
+var client;
 var access_token;
 // Callback function for Google One Tap sign-in
 async function handleOneTapSignIn(response) {
   // Handle the sign-in response here
   const credential = response.credential;
-  console.log('One Tap credential:', credential);
-  await gisLoadPromise;
-  console.debug('GIS promise completed');
+}
+
+
+async function initClient() {
+  // Load the Google API Client Library for JavaScript (gapi)
+  await gapiLoadPromise
   await new Promise((resolve, reject) => {
-    try {
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file',
-        prompt: 'consent',
-        callback: (tokenResponse) => {
-          access_token = tokenResponse.access_token;
-        },  // defined at request time in await/promise scope.
-      });
-      resolve();
-    } catch (err) {
-      reject(err);
-    }});
-  loadGapiClient();
-  getToken();
-}
-
-// Load the Google API Client Library for JavaScript (gapi)
-function loadGapiClient() {
-  gapi.load('client', {
-      // Specify the callback function to be called when gapi client is loaded
-      callback: initGapiClient
+    gapi.load('client', {callback: resolve, onerror: reject});
   });
-}
-
-
-// await gisLoadPromise;
-// await new Promise((resolve, reject) => {
-//   try {
-//     tokenClient = google.accounts.oauth2.initTokenClient({
-//         client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
-//         scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file',
-//         prompt: 'consent',
-//         callback: '',  // defined at request time in await/promise scope.
-//     });
-//     resolve();
-//   } catch (err) {
-//     reject(err);
-//   }
-// })
-
-// Initialize the gapi client
-function initGapiClient() {
-  try{
-  gapi.client.load('calendar', 'v3', function() {
-    console.log('Calendar API loaded.');
-  })}
-  catch(err){
-    console.error('Error loading calendar API: ' + err)
-  };
-  try {
-  gapi.client.load('sheets', 'v4', function() {
-    console.log('Sheets API loaded.');
-  })}
-  catch(err){
-    console.error('Error loading sheets API: ' + err)
-  };
+  // initialize the client and load discovery docs
+  await gapi.client.init({
+  })
+  .then(function() {
+    gapi.client.load('calendar', 'v3', access_token);
+    gapi.client.load('sheets', 'v4', access_token);
+  });
+  // load Google Identity Services
+  await gisLoadPromise
+  // initialize the GIS client
+  client = google.accounts.oauth2.initTokenClient({
+    client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/spreadsheets.readonly',
+    'callback': (tokenResponse) => {
+      access_token = tokenResponse.access_token;
+    },
+  });
 }
 const gapiLoadPromise = new Promise((resolve, reject) => {
   gapiLoadOkay = resolve;
@@ -74,65 +40,26 @@ const gisLoadPromise = new Promise((resolve, reject) => {
   gisLoadFail = reject;
 });
 
-var tokenClient;
-
 function getToken() {
-  tokenClient.requestAccessToken();
+  client.requestAccessToken();
 }
-
-// async function getToken(err) {
-//   if (!err) {
-//     await new Promise((resolve, reject) => {
-//       try {
-//         console.debug(tokenClient);
-//         // Settle this promise in the response callback for requestAccessToken()
-//         tokenClient.callback = (resp) => {
-//           if (resp.error !== undefined) {
-//             reject(resp);
-//           }
-//           // GIS has automatically updated gapi.client with the newly issued access token.
-//           console.debug('gapi.client access token: ' + JSON.stringify(gapi.client.getToken()));
-//           resolve(resp);
-//         };
-//         tokenClient.requestAccessToken();
-//       } catch (err) {
-//         console.error(err)
-//       }
-//     });
-//     
-//   } else if (err.result.error.code == 401 || (err.result.error.code == 403) &&
-//   (err.result.error.status == "PERMISSION_DENIED")) {
-//     // The access token is missing, invalid, or expired, prompt for user consent to obtain one.
-//     await new Promise((resolve, reject) => {
-//       try {
-//         // Settle this promise in the response callback for requestAccessToken()
-//         tokenClient.callback = (resp) => {
-//           if (resp.error !== undefined) {
-//             reject(resp);
-//           }
-//           // GIS has automatically updated gapi.client with the newly issued access token.
-//           resolve(resp);
-//         };
-//         tokenClient.requestAccessToken();
-//       } catch (err) {
-//         console.error(err)
-//       }
-//     });
-//   } else {
-//     // Errors unrelated to authorization: server errors, exceeding quota, bad requests, and so on.
-//     throw new Error(err);
-//   }
-// }
-
+function revokeToken() {
+  let cred = gapi.client.getToken();
+  if (cred !== null) {
+    google.accounts.oauth2.revoke(access_token, () => {console.log('access token revoked')});
+    gapi.client.setToken('');
+  }
+}
 // Initialize Google One Tap
-window.onload = function() {
-  google.accounts.id.initialize({
-      // Client ID obtained from Google Cloud Console
-      client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
-      'callback': handleOneTapSignIn,
-      'scope': 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file'
-  });
-};
+window.onload = initClient();
+// function() {
+//   google.accounts.id.initialize({
+//       // Client ID obtained from Google Cloud Console
+//       client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
+//       'callback': handleOneTapSignIn,
+//       'scope': 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file'
+//   });
+// };
 
 
 let myCalendars = [];
@@ -172,21 +99,13 @@ async function findOrCreateCalendar(calendarName = 'BMRBL Umpire - d6c1b') {
       }
     })
     .catch(err => {
-      getToken(err); // Obtain access token for authorization errors
+      // getAccessToken(); // Obtain access token for authorization errors
       alert('Error retrieving calendar list: 14x002');
       console.error('Error retrieving calendar list: ', err);
       throw err;
     });
     return umpireCalendarId
   }
-
-function revokeToken() {
-  let cred = gapi.client.getToken();
-  if (cred !== null) {
-    google.accounts.oauth2.revoke(access_token, () => {console.log('access token revoked')});
-    gapi.client.setToken('');
-  }
-}
 
 let gameList = null
 let contactList = null
@@ -195,8 +114,8 @@ var filteredData
 
 // Make sure the client is loaded and sign-in is complete before calling this method.
 async function fetchData() {
-  const sheetsAPI = gapi.client.sheets.spreadsheets;
-  return sheetsAPI.get({
+  const sheetsClient = gapi.client.sheets.spreadsheets;
+  return sheetsClient.get({
     'spreadsheetId': '1nDPHswUSq1KP6VZhvhYDAjjg-3reWuyWdbA9J0csHUg',
     'includeGridData': true,
     'ranges': [
@@ -219,7 +138,7 @@ async function fetchData() {
     displayOutputToUser('Data loaded, dropdown list now available.')
   })
   .catch(err => {
-    getToken(err); // Obtain access token for authorization errors
+    // getAccessToken(); // Obtain access token for authorization errors
     alert('Error fetching data: 14x003');
     console.error('Error fetching data: ', err);
     throw err;
