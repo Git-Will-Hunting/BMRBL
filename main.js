@@ -3,7 +3,8 @@ var access_token;
 // Callback function for Google One Tap sign-in
 async function handleOneTapSignIn(response) {
   // Handle the sign-in response here
-  const credential = response.credential;
+  initClient();
+  getToken();
 }
 
 
@@ -24,7 +25,7 @@ async function initClient() {
   await gisLoadPromise
   // initialize the GIS client
   client = google.accounts.oauth2.initTokenClient({
-    client_id: '753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com',
+    client_id: '539140853969-9darl9kloa158ekgfma3qt8cvbe0qhj7.apps.googleusercontent.com',
     scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/spreadsheets.readonly',
     'callback': (tokenResponse) => {
       access_token = tokenResponse.access_token;

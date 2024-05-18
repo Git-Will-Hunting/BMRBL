@@ -1,58 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMRBL Umpire Calendar Tool</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMRBL Umpire Calendar Tool</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+  <div class="header">
+		<div>
+			<a href="http://localhost:8080/"><img src="../images/calendar-svgrepo-com.svg" alt="Calendar"></a>
+			<a href="http://localhost:8080/">Home</a>
+		</div>
+		<div>
+			<a href="http://localhost:8080/tos/"><img src="../images/signing-the-contract-svgrepo-com.svg" alt="Terms"></a>
+			<a href="http://localhost:8080/tos/">Terms</a>
+		</div>
+		<div>
+			<a href="http://localhost:8080/privacy/"><img src="../images/user-shield-svgrepo-com.svg" alt="Privacy"></a>
+			<a href="http://localhost:8080/privacy/">Privacy</a>
+		</div>
+	</div>
   <h1>BMRBL Umpire Calendar Tool</h1>
-  <script async src="main.js"></script>
-  <div>
-    <div id="g_id_onload"
-     data-client_id="753289278608-1p0ahebm5367kj1ev0c68h3poodhpn06.apps.googleusercontent.com"
-     data-context="signin"
-     data-callback="handleOneTapSignIn"
-     data-itp_support="true">
+  <div class="oneTap">
+    <div id="g_id_onload" data-client_id="539140853969-9darl9kloa158ekgfma3qt8cvbe0qhj7.apps.googleusercontent.com"
+      data-context="use" data-ux_mode="redirect" data-login_uri="https://git-will-hunting.github.io/BMRBL/"
+      data-callback="handleOneTapSignIn" data-itp_support="true">
     </div>
-    <button id="showEventsBtn" onclick="getToken();">Sign in using Google</button><br><br>
-    <button id="revokeBtn" onclick="revokeToken();">Sign out of the app</button>
+
+    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="continue_with"
+      data-size="large" data-logo_alignment="left">
+    </div>
+    <!-- <button id="showEventsBtn" onclick="getToken();">Sign in using Google</button><br><br> -->
+    <!-- <button id="revokeBtn" onclick="revokeToken();">Sign out of the app</button> -->
   </div>
-  
+  <script async src="main.js"></script>
   <script async src="https://apis.google.com/js/api.js" onload="gapiLoadOkay()" onerror="gapiLoadFail(event)"></script>
-  <script async src="https://accounts.google.com/gsi/client" onload="gisLoadOkay()" onerror="gisLoadFail(event)"></script>
+  <script async src="https://accounts.google.com/gsi/client" onload="gisLoadOkay()"
+    onerror="gisLoadFail(event)"></script>
 
   <div>
     <div id="data-tools">
-        <div>
-            <button id="fetchDataBtn">Fetch Data</button>
-            <button id="createEventsBtn">Create Calendar Events</button>
-            <button id="deleteCalendarBtn">Delete the BMRBL Calendar</button>
-        </div>
-        <label for="name-select">Select Name:</label>
-        <select id="name-select">
-          <option value="Select...">Select...</option>
-          <!-- Dropdown options will be populated dynamically -->
-        </select>
+        <button class="fnBtn" id="fetchDataBtn">Fetch Data</button>
+        <span>
+          <label for="name-select">Select Name:</label>
+          <select id="name-select">
+            <option value="Select...">Select...</option>
+            <!-- Dropdown options will be populated dynamically -->
+          </select>
+        </span>
+        <button class="fnBtn" id="createEventsBtn">Create Calendar Events</button>
+        <button class="fnBtn" id="deleteCalendarBtn">Delete the BMRBL Calendar</button>
+
     </div>
     <div>
-        <p>Welcome to the calendar tool for BMRBL created by William K. <br>
-            To use the tool, please sign in using Google, then when sign in completes click on fetch data. <br>
-            This creates a calendar in your google account unless it already exists. Then you can filter the 
-            list by name and click "Create Calendar Events" to create the events. If you want to remove the 
-            calendar click on "Delete the BMRBL Calendar"</p>
+      <p>Welcome to the calendar tool for BMRBL created by Git-Will-Hunting. <br>
+        I created this tool to make event creation easier for when you sign up for games for the season. For
+        every game assigned to an umpire in the sheet it will create events in their Google Calendar; when
+        doing this it also determines if they are on plate or base, locates the field, checks who their partner
+        is for the game, and pulls their contact information into the event description.</p><br>
+
+      To use the tool: <br>
+      <ol>
+        <li>
+          Please sign in using Google and consent to the permissions requested.
+        </li>
+        <li>
+          Clicking "Fetch Data" will create a calendar in your google account unless it already exists and populate
+          the dropdown list of umpires. Then you can filter the list to view games for a specific umpire.
+        </li>
+        <li>
+          "Create Calendar Events" to create the events.
+        </li>
+        <li>
+          If you want to remove the calendar (suggested before creating the events anew) click on "Delete the BMRBL
+          Calendar"
+        </li>
+      </ol>
     </div>
   </div>
   <div class="table-container">
     <table id="data-table" title="Game List">
       <thead>
         <tr>
-            <!-- Table headers will be populated dynamically -->
+          <!-- Table headers will be populated dynamically -->
         </tr>
       </thead>
       <tbody>
-          <!-- Table rows will be populated dynamically -->
+        <!-- Table rows will be populated dynamically -->
       </tbody>
     </table>
   </div>
@@ -60,4 +97,5 @@
     This is where the output is displayed.
   </div>
 </body>
+
 </html>
