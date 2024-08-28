@@ -108,7 +108,7 @@ async function findOrCreateCalendar(calendarName = 'BMRBL Umpire - d6c1b') {
     return umpireCalendarId
   }
 
-let gameList = null
+let regSeasonList = null
 let contactList = null
 let umpireList = []
 var filteredData
@@ -120,21 +120,23 @@ async function fetchData() {
     'spreadsheetId': '1nDPHswUSq1KP6VZhvhYDAjjg-3reWuyWdbA9J0csHUg',
     'includeGridData': true,
     'ranges': [
-      'BMRBL SEASON SCHEDULE!A1:H400',
-      'CONTACT LIST!A1:F82'
+      'BMRBL SEASON SCHEDULE!A1:H500',
+      'BMRBL PLAYOFF SCHEDULE!A1:H150',
+      'CONTACT LIST!A1:F100'
     ]
   })
   .then(response => {
-    gameList = response.result.sheets[0].data[0].rowData;
+    regSeasonList = response.result.sheets[0].data[0].rowData;
+    playoffList = response.result.sheets[1].data[0].rowData;
     contactList = [];
-    response.result.sheets[1].data[0].rowData.forEach(row => {
+    response.result.sheets[2].data[0].rowData.forEach(row => {
       contactList.push({
         'name': row.values[1].formattedValue + ' ' + row.values[2].formattedValue,
         'cell': row.values[3].formattedValue
       })
     });
     // Handle the results here (response.result has the parsed body).
-    console.debug('Sheet data: ', gameList);
+    console.debug('Sheet data: ', regSeasonList);
     createDropdownList();
     displayOutputToUser('Data loaded, dropdown list now available.')
   })
@@ -150,14 +152,22 @@ async function fetchData() {
 // // this is automatically run after the sheet data is retrieved
 function createDropdownList() {
   var rawUmpires = []
-for (var i = 5; i < 400; i++){
-  rawUmpires.push(gameList[i].values[4].formattedValue);
-  rawUmpires.push(gameList[i].values[5].formattedValue);}
+for (var i = 5; i < 500; i++){
+  rawUmpires.push(regSeasonList[i].values[4].formattedValue);
+  rawUmpires.push(regSeasonList[i].values[5].formattedValue);
+  }
+  for (var i = 5; i < 150; i++){
+  rawUmpires.push(playoffList[i].values[3].formattedValue);
+  rawUmpires.push(playoffList[i].values[4].formattedValue);
+  rawUmpires.push(playoffList[i].values[5].formattedValue);
+  }
   // Get unique values
   umpireList = [...new Set(rawUmpires)];
+  umpireList.delete("IF NECESSARY");
 
   // Populate the dropdown selector with unique values
   const nameSelect = document.getElementById('name-select');
+  const seasonSelect = document.getElementById('season-select');
   umpireList.forEach(value => {
     const option = document.createElement('option');
     option.value = value;
@@ -166,13 +176,20 @@ for (var i = 5; i < 400; i++){
   });
 
   // Add event listener to handle selection change
-  nameSelect.addEventListener('change', filterAndDisplayData);
+  nameSelect.addEventListener('change', e => {
+    if (seasonSelect === 'Post Season') {
+      playoffDisplay();
+    }
+    else {
+      regSeasonDisplay();
+    }
+});    
 }
 
 // Function to display data
-function filterAndDisplayData() {
+function regSeasonDisplay() {
   const selectedName = document.getElementById('name-select').value; // Get the selected value from the dropdown
-  filteredData = filterData(selectedName);
+  filteredData = filterRegSeason(selectedName);
   displayOutputToUser(`Showing data for ${selectedName}`);
   
   // Populate the table with filtered data
@@ -181,18 +198,49 @@ function filterAndDisplayData() {
 }
 
 // Function to filter data based on selected name
-function filterData(selectedName){
+function filterRegSeason(selectedName){
   if (selectedName === 'Select...') {
-    return gameList.slice(4, 400);
+    return regSeasonList.slice(4, 500);
   }  else if (!selectedName || selectedName.trim() === '') {
     // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
-    return gameList.filter(row => {
+    return regSeasonList.filter(row => {
       return !row.values[4] || row.values[4].formattedValue.trim() === '' ||  // Check if column index 4 is empty
              !row.values[5] || row.values[5].formattedValue.trim() === '';    // Check if column index 5 is empty  });
     });
   } else {
     // If selectedName is set, filter rows based on the selected name
-    return gameList.filter(row => {
+    return regSeasonList.filter(row => {
+      return row.values.some(cellObject => {
+        return cellObject.formattedValue === selectedName;
+      });
+    });
+  }
+}
+// Function to display data
+function playoffDisplay() {
+  const selectedName = document.getElementById('name-select').value; // Get the selected value from the dropdown
+  filteredData = filterPlayoff(selectedName);
+  displayOutputToUser(`Showing data for ${selectedName}`);
+  
+  // Populate the table with filtered data
+  populateTable(filteredData);
+  return filteredData;
+}
+
+// Function to filter data based on selected name
+function filterPlayoff(selectedName){
+  if (selectedName === 'Select...') {
+    return playoffList.slice(4, 150);
+  }  else if (!selectedName || selectedName.trim() === '') {
+    // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
+    return playoffList.filter(row => {
+      return !row.values[3] || row.values[3].formattedValue.trim() === '' ||  // Check if column index 3 is empty
+             !row.values[4] || row.values[4].formattedValue.trim() === '' ||  // Check if column index 4 is empty
+             !row.values[5] || row.values[5].formattedValue.trim() === '';    // Check if column index 5 is empty  });
+    });
+  } else {
+    // If selectedName is set, filter rows based on the selected name
+    return playoffList.filter(row => {
       return row.values.some(cellObject => {
         return cellObject.formattedValue === selectedName;
       });
@@ -212,7 +260,7 @@ function populateTable(data) {
 
   // Populate table headers with data from row 3
   const headersRow = document.createElement('tr');
-  gameList[2].values.forEach(header => {
+  regSeasonList[2].values.forEach(header => {
     const th = document.createElement('th');
     th.textContent = header.formattedValue;
     headersRow.appendChild(th);
@@ -316,7 +364,7 @@ function convertParkToAddress(park) {
 // generateEventData takes in an array from the sheet and formats the information for calendar
 // returns an array of event objects
 async function generateEventData(){
-  const gameData = filterAndDisplayData();
+  const gameData = regSeasonDisplay();
   let eventDataArray = []
   eventDataArray.push(gameData.map(row => {
     // Extract values from the row
