@@ -344,7 +344,7 @@ function convertParkToAddress(park) {
     case 'CHRIS GIBSON':
       return 'Flowertown Ave & McLaughlin Rd N, Brampton, ON L6X 2J3';
     case 'DAVE DASH':
-      return '48 McMurchy Ave S, Brampton, ON L6Y 2K5';
+      return '46 McMurchy Ave S, Brampton, ON L6Y 2K5';
     case 'TERAMOTO RED':
       return '9056 Chinguacousy Rd, Brampton, ON L6X 0B2';
     case 'TERAMOTO YELLOW':
@@ -362,8 +362,66 @@ function convertParkToAddress(park) {
 // generateEventData takes in an array from the sheet and formats the information for calendar
 // returns an array of event objects
 async function generateEventData(){
-  const gameData = regSeasonDisplay();
-  let eventDataArray = []
+  if (seasonSelect === 'Post Season') {
+    gameData = playoffDisplay();
+
+    let eventDataArray = []
+  eventDataArray.push(gameData.map(row => {
+    // Extract values from the row
+    let summary = toTitleCase(row.values[3].formattedValue);
+    var description;
+    const dateWithoutYear = row.values[0].formattedValue; // Assuming date format is 'MM/DD'
+    const startTime = row.values[1].formattedValue;
+    const locationKey = row.values[2].formattedValue;
+    const selectedName = document.getElementById('name-select').value;
+  
+    // Determine summary based on conditions
+    if (row.values[3].formattedValue === selectedName) {
+      summary += ' Plate';
+      description = 'Working with ' + row.values[4].formattedValue;
+      if(row.values[4].formattedValue){
+        var partner = contactList.find(name => name.name ===  row.values[4].formattedValue);
+        partner ? description += '\n phone: ' + partner.cell : description;
+      }
+    } else if (row.values[4].formattedValue === selectedName) {
+      summary += ' Base';
+      description = 'Working with ' + row.values[3].formattedValue;
+      if(row.values[3].formattedValue){
+        var partner = contactList.find(name => name.name ===  row.values[3].formattedValue);
+        partner ? description += '\n phone: ' + partner.cell : description
+      }
+    }
+  
+    // Convert location key to physical address
+    const physicalAddress = convertParkToAddress(locationKey);
+  
+    // Construct full date string with the current year
+    const currentYear = new Date().getFullYear(); // Get the current year
+    const dateWithYear = `${dateWithoutYear} ${currentYear}`;
+  
+    // Calculate start and end date-time
+    const startDateTime = new Date(`${dateWithYear} ${startTime}`);
+    const endDateTime = new Date(startDateTime.getTime() + 2.5 * 60 * 60 * 1000); // Add 2.5 hours
+    // Construct eventData object
+    return {
+      summary,
+      'location': physicalAddress,
+      'start': {
+        'dateTime': startDateTime.toISOString()
+      },
+      'end': {
+        'dateTime': endDateTime.toISOString()
+      },
+      'description': description
+    };
+  }));
+  displayOutputToUser(eventDataArray);
+  return eventDataArray;
+  }
+  else {
+    gameData = regSeasonDisplay();
+
+    let eventDataArray = []
   eventDataArray.push(gameData.map(row => {
     // Extract values from the row
     let summary = toTitleCase(row.values[3].formattedValue);
@@ -415,6 +473,9 @@ async function generateEventData(){
   }));
   displayOutputToUser(eventDataArray);
   return eventDataArray;
+  }
+  
+  
 }
 
 function getContactInfo(row, index){
