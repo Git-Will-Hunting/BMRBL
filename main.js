@@ -108,7 +108,8 @@ async function findOrCreateCalendar(calendarName = 'BMRBL Umpire - d6c1b') {
     return umpireCalendarId
   }
 
-let regSeasonList = null
+let regSeasonList = []
+let playoffList = []
 let contactList = null
 let umpireList = []
 var filteredData
@@ -120,14 +121,35 @@ async function fetchData() {
     'spreadsheetId': '1nDPHswUSq1KP6VZhvhYDAjjg-3reWuyWdbA9J0csHUg',
     'includeGridData': true,
     'ranges': [
-      'BMRBL SEASON SCHEDULE!A1:H500',
-      'BMRBL PLAYOFF SCHEDULE!A1:H150',
+      'BMRBL SEASON SCHEDULE!A1:H426',
+      'BMRBL PLAYOFF SCHEDULE!A1:H90',
       'CONTACT LIST!A1:F100'
     ]
   })
   .then(response => {
     regSeasonList = response.result.sheets[0].data[0].rowData;
-    playoffList = response.result.sheets[1].data[0].rowData;
+    for (var i = 4; i < 90; i++){
+      if (response.result.sheets[1].data[0].rowData[i].values.length < 6){
+        playoffList.push({
+          'date': response.result.sheets[1].data[0].rowData[i].values[0],
+          'time': response.result.sheets[1].data[0].rowData[i].values[1],
+          'park': response.result.sheets[1].data[0].rowData[i].values[2],
+          'plate': response.result.sheets[1].data[0].rowData[i].values[3],
+          'base': response.result.sheets[1].data[0].rowData[i].values[4],
+          'third':response.result.sheets[1].data[0].rowData[28].values[5]
+        });    
+      }
+      else {
+        playoffList.push({
+          'date': response.result.sheets[1].data[0].rowData.values[0],
+          'time': response.result.sheets[1].data[0].rowData.values[1],
+          'park': response.result.sheets[1].data[0].rowData.values[2],
+          'plate': response.result.sheets[1].data[0].rowData.values[3],
+          'base': response.result.sheets[1].data[0].rowData.values[4],
+          'third': response.result.sheets[1].data[0].rowData.values[5],
+        });  
+      }
+    } 
     contactList = [];
     response.result.sheets[2].data[0].rowData.forEach(row => {
       contactList.push({
@@ -152,11 +174,11 @@ async function fetchData() {
 // // this is automatically run after the sheet data is retrieved
 function createDropdownList() {
   var rawUmpires = []
-for (var i = 5; i < 500; i++){
+for (var i = 5; i < 426; i++){
   rawUmpires.push(regSeasonList[i].values[4].formattedValue);
   rawUmpires.push(regSeasonList[i].values[5].formattedValue);
   }
-  for (var i = 5; i < 150; i++){
+  for (var i = 5; i < 90; i++){
   rawUmpires.push(playoffList[i].values[3].formattedValue);
   rawUmpires.push(playoffList[i].values[4].formattedValue);
   rawUmpires.push(playoffList[i].values[5].formattedValue);
