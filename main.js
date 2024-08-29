@@ -128,28 +128,7 @@ async function fetchData() {
   })
   .then(response => {
     regSeasonList = response.result.sheets[0].data[0].rowData;
-    for (var i = 4; i < 90; i++){
-      if (response.result.sheets[1].data[0].rowData[i].values.length < 6){
-        playoffList.push({'values' : [
-          response.result.sheets[1].data[0].rowData[i].values[0],
-          response.result.sheets[1].data[0].rowData[i].values[1],
-          response.result.sheets[1].data[0].rowData[i].values[2],
-          response.result.sheets[1].data[0].rowData[i].values[3],
-          response.result.sheets[1].data[0].rowData[i].values[4],
-          response.result.sheets[1].data[0].rowData[28].values[5]
-        ]});
-      }
-      else {
-        playoffList.push({'values' : [
-          response.result.sheets[1].data[0].rowData[i].values[0],
-          response.result.sheets[1].data[0].rowData[i].values[1],
-          response.result.sheets[1].data[0].rowData[i].values[2],
-          response.result.sheets[1].data[0].rowData[i].values[3],
-          response.result.sheets[1].data[0].rowData[i].values[4],
-          response.result.sheets[1].data[0].rowData[i].values[5],
-        ]});  
-      }
-    } 
+    playoffList = response.result.sheets[1].data[0].rowData;
     contactList = [];
     response.result.sheets[2].data[0].rowData.forEach(row => {
       contactList.push({
@@ -254,7 +233,7 @@ function filterPlayoff(selectedName){
   if (selectedName === 'Select...') {
     return playoffList.slice(4, 90);
   }  else if (!selectedName || selectedName.trim() === '') {
-    // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
+    // If selectedName is not set or blank, include rows with blank values in column index 3, 4, or 5
     return playoffList.filter(row => {
       return !row.values[3] || row.values[3].formattedValue.trim() === '' ||  // Check if column index 3 is empty
              !row.values[4] || row.values[4].formattedValue.trim() === '' ||  // Check if column index 4 is empty
