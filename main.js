@@ -130,24 +130,24 @@ async function fetchData() {
     regSeasonList = response.result.sheets[0].data[0].rowData;
     for (var i = 4; i < 90; i++){
       if (response.result.sheets[1].data[0].rowData[i].values.length < 6){
-        playoffList.push({
-          'date': response.result.sheets[1].data[0].rowData[i].values[0],
-          'time': response.result.sheets[1].data[0].rowData[i].values[1],
-          'park': response.result.sheets[1].data[0].rowData[i].values[2],
-          'plate': response.result.sheets[1].data[0].rowData[i].values[3],
-          'base': response.result.sheets[1].data[0].rowData[i].values[4],
-          'third':response.result.sheets[1].data[0].rowData[28].values[5]
-        });    
+        playoffList.push(
+          response.result.sheets[1].data[0].rowData[i].values[0],
+          response.result.sheets[1].data[0].rowData[i].values[1],
+          response.result.sheets[1].data[0].rowData[i].values[2],
+          response.result.sheets[1].data[0].rowData[i].values[3],
+          response.result.sheets[1].data[0].rowData[i].values[4],
+          response.result.sheets[1].data[0].rowData[28].values[5]
+        );    
       }
       else {
-        playoffList.push({
-          'date': response.result.sheets[1].data[0].rowData.values[0],
-          'time': response.result.sheets[1].data[0].rowData.values[1],
-          'park': response.result.sheets[1].data[0].rowData.values[2],
-          'plate': response.result.sheets[1].data[0].rowData.values[3],
-          'base': response.result.sheets[1].data[0].rowData.values[4],
-          'third': response.result.sheets[1].data[0].rowData.values[5],
-        });  
+        playoffList.push(
+          response.result.sheets[1].data[0].rowData[i].values[0],
+          response.result.sheets[1].data[0].rowData[i].values[1],
+          response.result.sheets[1].data[0].rowData[i].values[2],
+          response.result.sheets[1].data[0].rowData[i].values[3],
+          response.result.sheets[1].data[0].rowData[i].values[4],
+          response.result.sheets[1].data[0].rowData[i].values[5],
+        );  
       }
     } 
     contactList = [];
