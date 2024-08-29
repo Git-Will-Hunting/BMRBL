@@ -370,7 +370,7 @@ async function generateEventData(){
     let eventDataArray = []
   eventDataArray.push(gameData.map(row => {
     // Extract values from the row
-    let summary = toTitleCase(row.values[3].formattedValue);
+    let summary = toTitleCase(row.values[2].formattedValue);
     var description;
     const dateWithoutYear = row.values[0].formattedValue; // Assuming date format is 'MM/DD'
     const startTime = row.values[1].formattedValue;
