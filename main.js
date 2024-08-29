@@ -163,8 +163,7 @@ for (var i = 5; i < 426; i++){
   }
   // Get unique values
   umpireList = [...new Set(rawUmpires)];
-  umpireList.delete("IF NECESSARY");
-
+  
   // Populate the dropdown selector with unique values
   const nameSelect = document.getElementById('name-select');
   const seasonSelect = document.getElementById('season-select');
