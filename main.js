@@ -160,7 +160,6 @@ for (var i = 5; i < 426; i++){
   for (var i = 5; i < 90; i++){
   rawUmpires.push(playoffList[i].values[3].formattedValue);
   rawUmpires.push(playoffList[i].values[4].formattedValue);
-  rawUmpires.push(playoffList[i].values[5].formattedValue);
   }
   // Get unique values
   umpireList = [...new Set(rawUmpires)];
