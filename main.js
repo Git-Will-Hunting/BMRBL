@@ -222,7 +222,7 @@ function regSeasonDisplay() {
 // Function to filter data based on selected name
 function filterRegSeason(selectedName){
   if (selectedName === 'Select...') {
-    return regSeasonList.slice(4, 500);
+    return regSeasonList.slice(4, 426);
   }  else if (!selectedName || selectedName.trim() === '') {
     // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
     return regSeasonList.filter(row => {
@@ -252,7 +252,7 @@ function playoffDisplay() {
 // Function to filter data based on selected name
 function filterPlayoff(selectedName){
   if (selectedName === 'Select...') {
-    return playoffList.slice(4, 150);
+    return playoffList.slice(4, 90);
   }  else if (!selectedName || selectedName.trim() === '') {
     // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
     return playoffList.filter(row => {
