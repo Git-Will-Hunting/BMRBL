@@ -112,7 +112,6 @@ let regSeasonList = []
 let playoffList = []
 let contactList = null
 let umpireList = []
-var filteredData
 
 // Make sure the client is loaded and sign-in is complete before calling this method.
 async function fetchData() {
@@ -163,7 +162,7 @@ for (var i = 5; i < 426; i++){
   }
   // Get unique values
   umpireList = [...new Set(rawUmpires)];
-  
+
   // Populate the dropdown selector with unique values
   const nameSelect = document.getElementById('name-select');
   const seasonSelect = document.getElementById('season-select');
