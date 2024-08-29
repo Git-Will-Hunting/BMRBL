@@ -177,7 +177,7 @@ for (var i = 5; i < seasonMax; i++){
 
   // Add event listener to handle selection change
   nameSelect.addEventListener('change', e => {
-    if (seasonSelect === 'Post Season') {
+    if (seasonSelect.value === 'Post Season') {
       playoffDisplay();
     }
     else {
@@ -364,7 +364,7 @@ function convertParkToAddress(park) {
 // generateEventData takes in an array from the sheet and formats the information for calendar
 // returns an array of event objects
 async function generateEventData(){
-  if (seasonSelect === 'Post Season') {
+  if (seasonSelect.value === 'Post Season') {
     gameData = playoffDisplay();
 
     let eventDataArray = []
@@ -392,7 +392,14 @@ async function generateEventData(){
         var partner = contactList.find(name => name.name ===  row.values[3].formattedValue);
         partner ? description += '\n phone: ' + partner.cell : description
       }
-    }
+    } else if (row.values[5].formattedValue === selectedName) {
+      summary += ' Base';
+      description = 'Working with ' + row.values[3].formattedValue + ' and ' + row.values[4].formattedValue;
+      if(row.values[3].formattedValue){
+        var partner = contactList.find(name => name.name ===  row.values[3].formattedValue);
+        partner ? description += '\n phone: ' + partner.cell : description
+      }
+    } 
   
     // Convert location key to physical address
     const physicalAddress = convertParkToAddress(locationKey);
