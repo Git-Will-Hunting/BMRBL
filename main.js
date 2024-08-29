@@ -1,5 +1,8 @@
 var client;
 var access_token;
+const seasonSelect = document.getElementById('season-select');
+const seasonMax = 426;
+const playoffMax = 90;
 // Callback function for Google One Tap sign-in
 async function handleOneTapSignIn(response) {
   // Handle the sign-in response here
@@ -120,8 +123,8 @@ async function fetchData() {
     'spreadsheetId': '1nDPHswUSq1KP6VZhvhYDAjjg-3reWuyWdbA9J0csHUg',
     'includeGridData': true,
     'ranges': [
-      'BMRBL SEASON SCHEDULE!A1:H426',
-      'BMRBL PLAYOFF SCHEDULE!A1:H90',
+      `BMRBL SEASON SCHEDULE!A1:H${seasonMax}`,
+      `BMRBL PLAYOFF SCHEDULE!A1:H${playoffMax}`,
       'CONTACT LIST!A1:F100'
     ]
   })
@@ -152,11 +155,11 @@ async function fetchData() {
 // // this is automatically run after the sheet data is retrieved
 function createDropdownList() {
   var rawUmpires = []
-for (var i = 5; i < 426; i++){
+for (var i = 5; i < seasonMax; i++){
   rawUmpires.push(regSeasonList[i].values[4].formattedValue);
   rawUmpires.push(regSeasonList[i].values[5].formattedValue);
   }
-  for (var i = 5; i < 90; i++){
+  for (var i = 5; i < playoffMax; i++){
   rawUmpires.push(playoffList[i].values[3].formattedValue);
   rawUmpires.push(playoffList[i].values[4].formattedValue);
   }
@@ -165,7 +168,6 @@ for (var i = 5; i < 426; i++){
 
   // Populate the dropdown selector with unique values
   const nameSelect = document.getElementById('name-select');
-  const seasonSelect = document.getElementById('season-select');
   umpireList.forEach(value => {
     const option = document.createElement('option');
     option.value = value;
@@ -198,7 +200,7 @@ function regSeasonDisplay() {
 // Function to filter data based on selected name
 function filterRegSeason(selectedName){
   if (selectedName === 'Select...') {
-    return regSeasonList.slice(4, 426);
+    return regSeasonList.slice(4, seasonMax);
   }  else if (!selectedName || selectedName.trim() === '') {
     // If selectedName is not set or blank, include rows with blank values in column index 4 or 5
     return regSeasonList.filter(row => {
@@ -228,7 +230,7 @@ function playoffDisplay() {
 // Function to filter data based on selected name
 function filterPlayoff(selectedName){
   if (selectedName === 'Select...') {
-    return playoffList.slice(4, 90);
+    return playoffList.slice(4, playoffMax);
   }  else if (!selectedName || selectedName.trim() === '') {
     // If selectedName is not set or blank, include rows with blank values in column index 3, 4, or 5
     return playoffList.filter(row => {
