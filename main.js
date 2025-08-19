@@ -156,12 +156,12 @@ async function fetchData() {
 function createDropdownList() {
   var rawUmpires = []
 for (var i = 5; i < seasonMax; i++){
-  rawUmpires.push(regSeasonList[i].values[4].formattedValue);
-  rawUmpires.push(regSeasonList[i].values[5].formattedValue);
+  rawUmpires.push(regSeasonList[i].values[4]?.formattedValue ?? '');
+  rawUmpires.push(regSeasonList[i].values[5]?.formattedValue ?? '');
   }
   for (var i = 5; i < playoffMax; i++){
-  rawUmpires.push(playoffList[i].values[3].formattedValue);
-  rawUmpires.push(playoffList[i].values[4].formattedValue);
+  rawUmpires.push(playoffList[i].values[3]?.formattedValue ?? '');
+  rawUmpires.push(playoffList[i].values[4]?.formattedValue ?? '');
   }
   // Get unique values
   umpireList = [...new Set(rawUmpires)];
