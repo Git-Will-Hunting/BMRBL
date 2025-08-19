@@ -373,7 +373,8 @@ async function generateEventData(){
     let summary = toTitleCase(row.values[2].formattedValue);
     var description;
     const dateWithoutYear = row.values[0].formattedValue; // Assuming date format is 'MM/DD'
-    const startTime = row.values[1].formattedValue;
+    const rawStartTime = row.values[1]?.formattedValue;
+    const startTime = rawStartTime === "Noon" ? "12:00 PM" : rawStartTime;
     const locationKey = row.values[2].formattedValue;
     const selectedName = document.getElementById('name-select').value;
   
