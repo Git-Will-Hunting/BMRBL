@@ -411,6 +411,10 @@ async function generateEventData(){
     // Calculate start and end date-time
     const startDateTime = new Date(`${dateWithYear} ${startTime}`);
     const endDateTime = new Date(startDateTime.getTime() + 2.5 * 60 * 60 * 1000); // Add 2.5 hours
+    //check data
+    console.log(startDateTime);
+    console.log(endDateTime);
+    
     // Construct eventData object
     return {
       summary,
